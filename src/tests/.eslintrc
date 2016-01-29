@@ -1,0 +1,8 @@
+{
+  "globals": { "chai": true, "makeTestConnection": true },
+  "rules": {
+    "no-unused-expressions": [
+      0
+    ]
+  }
+}
