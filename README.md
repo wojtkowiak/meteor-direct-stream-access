@@ -17,8 +17,8 @@ Firstly lets talk about the internals:
 - this package provides a more bare access to the socket, it does it in the most hacky way by wrapping some internal Meteor code.
 The reason to do it in that way was to achieve the features listed above.
  
-This package does not provide any allow/deny mechanism or meteor sessions abstraction or management. For now you have to do it yourself.
-However a security add-on is planed.
+This package does not provide any allow/deny mechanism nor meteor sessions abstraction or management. For now you have to do it yourself.
+However a security add-on is planned.
 
 ### Installation
 
@@ -34,7 +34,7 @@ In the handler you probably need to distinguish your custom messages from the DD
 ```javascript
 // Register a handler to receive messages. It will also receive DDP packets.
 Meteor.directStream.registerMessageHandler(function messageHandler(message, sessionId) {
-    console.log('Got a message: ' + message ' from session id: ' + sessionsId;
+    console.log('Got a message: ' + message ' from session id: ' + sessionId;
     if (message === 'test message') this.preventCallingMeteorHandler();
 });
 if (Meteor.isServer) {
@@ -66,4 +66,3 @@ To run the tests, being inside the meteor project that uses this package type:
 and check out the results in the browser.
 
 *If you will run the tests in two or more browsers in the same time, the tests may produce false negative output.*
-`
