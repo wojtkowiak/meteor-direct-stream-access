@@ -1,16 +1,16 @@
 Package.describe({
     name: 'omega:direct-stream-access',
-    version: '1.0.0',
+    version: '2.0.0',
     summary: 'Provides API to directly access Meteor\'s SockJS stream.',
     git: 'https://github.com/wojtkowiak/meteor-direct-stream-access',
     documentation: 'README.md'
 });
 
 Package.onUse(function onUse(api) {
-    api.versionsFrom('1.1.0.2');
-    api.use('ecmascript');
-    api.use('ddp-common');
-    api.use('underscore');
+    api.versionsFrom('1.2');
+    api.use('ecmascript@0.1.6');
+    api.use(['ddp-common@1.2.2'], 'client');
+    api.use(['underscore'], 'server');
     api.addFiles(['src/lib/common/DirectStreamAccess.js']);
     api.addFiles(['src/lib/DirectStreamAccess.client.js'], 'client');
     api.addFiles(['src/lib/DirectStreamAccess.server.js'], 'server');

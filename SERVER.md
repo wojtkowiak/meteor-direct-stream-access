@@ -10,7 +10,7 @@ Implementation for the **SERVER** side. Available as `Meteor.directStream` singl
   * _instance_
     * [.send(message, sessionId)](#DirectStreamAccess+send)
     * [.broadcast(message)](#DirectStreamAccess+broadcast)
-    * [.registerMessageHandler(messageHandler)](#DirectStreamAccessCommon+registerMessageHandler)
+    * [.onMessage(messageHandler)](#DirectStreamAccessCommon+onMessage)
     * [.preventCallingMeteorHandler()](#DirectStreamAccessCommon+preventCallingMeteorHandler)
     * [.stopProcessingHandlers()](#DirectStreamAccessCommon+stopProcessingHandlers)
     * [._processMessage(message, sessionId)](#DirectStreamAccessCommon+_processMessage)
@@ -42,8 +42,8 @@ Broadcasts the message to all clients.
 | --- | --- | --- |
 | message | <code>string</code> | Message to send to all connected clients. |
 
-<a name="DirectStreamAccessCommon+registerMessageHandler"></a>
-#### meteor.directStream.registerMessageHandler(messageHandler)
+<a name="DirectStreamAccessCommon+onMessage"></a>
+#### meteor.directStream.onMessage(messageHandler)
 Registers a message handler, which will be called to process every incoming message on the socket.
 
 **Kind**: instance method of <code>[DirectStreamAccess](#DirectStreamAccess)</code>  

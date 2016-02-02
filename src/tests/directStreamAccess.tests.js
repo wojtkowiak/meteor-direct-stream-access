@@ -24,8 +24,7 @@ describe('DirectStreamAccess', () => {
         let messageReceived = false;
 
         before(() => {
-            Meteor.directStream.registerMessageHandler(function messageHandler(message) {
-                console.log('messageHandler: ' + message);
+            Meteor.directStream.onMessage(function messageHandler(message) {
                 if (message === 'testMessage') {
                     messageReceived = true;
                     this.preventCallingMeteorHandler();
@@ -38,7 +37,6 @@ describe('DirectStreamAccess', () => {
         });
 
         it('should exchange messages between server and client', (done) => {
-            console.log('here');//, Meteor.directStream._messageHandlers.map((el) => el.name));
             testDone = done;
             if (Meteor.isClient) {
                 // Send the message to the server so the server side test can finish.

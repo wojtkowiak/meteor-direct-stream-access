@@ -35,7 +35,7 @@ DirectStreamAccessCommon = class DirectStreamAccessCommon {
      *
      * @param {DirectStreamAccess~messageHandler} messageHandler Function to process the incoming messages.
      */
-    registerMessageHandler(messageHandler) {
+    onMessage(messageHandler) {
         this._messageHandlers.push(messageHandler.bind(this));
     }
 

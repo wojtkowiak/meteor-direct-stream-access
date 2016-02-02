@@ -15,19 +15,17 @@ if (Meteor.isClient) {
             });
         });
 
-        describe('#registerMessageHandler()', () => {
+        describe('#onMessage()', () => {
             let testDone;
             const messageHandler = (message) => {
-                console.log('yyy', message);
                 if (~message.indexOf('testResponse')) {
                     testDone();
                 }
             };
 
             before(() => {
-                console.log('przed rej', Meteor.directStream._messageHandlers);
                 // We will register the wrapped `testDone` callback as a message handler so once its called it will also finish the test.
-                Meteor.directStream.registerMessageHandler(messageHandler);
+                Meteor.directStream.onMessage(messageHandler);
             });
             it('should register callback and receive messages', (done) => {
                 testDone = done;
@@ -43,8 +41,7 @@ if (Meteor.isClient) {
             let debug;
 
             before(() => {
-                Meteor.directStream.registerMessageHandler(function messageHandler(message) {
-                    console.log('got ' + message);
+                Meteor.directStream.onMessage(function messageHandler(message) {
                     // Selectively prevent Meteor's handler only on message `test`.
                     if (message === 'test') {
                         this.preventCallingMeteorHandler();
@@ -61,16 +58,13 @@ if (Meteor.isClient) {
                  * the _debug method.
                  **/
                 Meteor._debug = function _debug() {
-                    console.log(arguments);
                     if (typeof arguments[1] === 'string') {
-                        console.log('check');
                         expect(arguments[1]).to.be.equal('test2');
                         debugCalled = true;
                     }
                 };
                 Meteor.call('sendMessageFromServerToClient', 'test');
                 Meteor.call('sendMessageFromServerToClient', 'test2', () => {
-                    console.log('done');
                     expect(debugCalled).to.be.true();
                     done();
                 });

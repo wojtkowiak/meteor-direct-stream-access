@@ -9,7 +9,7 @@ Implementation for the **CLIENT** side. Available as `Meteor.directStream` singl
 * [DirectStreamAccess](#DirectStreamAccess) : <code>[DirectStreamAccess](#DirectStreamAccess)</code>
   * _instance_
     * [.send(message)](#DirectStreamAccess+send)
-    * [.registerMessageHandler(messageHandler)](#DirectStreamAccessCommon+registerMessageHandler)
+    * [.onMessage(messageHandler)](#DirectStreamAccessCommon+onMessage)
     * [.preventCallingMeteorHandler()](#DirectStreamAccessCommon+preventCallingMeteorHandler)
     * [.stopProcessingHandlers()](#DirectStreamAccessCommon+stopProcessingHandlers)
     * [._processMessage(message, sessionId)](#DirectStreamAccessCommon+_processMessage)
@@ -26,8 +26,8 @@ Sends a message to the server.This method does not throw any error if there is 
 | --- | --- | --- |
 | message | <code>string</code> | Message to send to the server. |
 
-<a name="DirectStreamAccessCommon+registerMessageHandler"></a>
-#### meteor.directStream.registerMessageHandler(messageHandler)
+<a name="DirectStreamAccessCommon+onMessage"></a>
+#### meteor.directStream.onMessage(messageHandler)
 Registers a message handler, which will be called to process every incoming message on the socket.
 
 **Kind**: instance method of <code>[DirectStreamAccess](#DirectStreamAccess)</code>  

@@ -1,6 +1,6 @@
 ## Meteor Direct Stream Access
 
-A really simple API to directly access the SockJS stream in meteor.
+A really simple API to directly access the SockJS stream in Meteor.
 
 ### Main features
 
@@ -28,12 +28,12 @@ Just add the package to your project with:
 
 ## Usage
 
-Use `registerMessageHandler` to register a callback for prcoessing incoming messages. Use `send` to send messages and on server you can also use `broadcast`. 
+Use `onMessage` to register a callback for processing incoming messages. Use `send` to send messages and on server you can also use `broadcast`. 
 In the handler you probably need to distinguish your custom messages from the DDP packets and if you want, you can prevent Meteor from processing your messages by calling `this.preventCallingMeteorHandler()` inside the message handler.
 
 ```javascript
 // Register a handler to receive messages. It will also receive DDP packets.
-Meteor.directStream.registerMessageHandler(function messageHandler(message, sessionId) {
+Meteor.directStream.onMessage(function messageHandler(message, sessionId) {
     console.log('Got a message: ' + message ' from session id: ' + sessionId;
     if (message === 'test message') this.preventCallingMeteorHandler();
 });

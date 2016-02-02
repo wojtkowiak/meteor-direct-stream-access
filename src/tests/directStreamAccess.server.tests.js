@@ -29,7 +29,7 @@ if (Meteor.isServer) {
             });
         });
 
-        describe('#registerMessageHandler()', () => {
+        describe('#onMessage()', () => {
             let testDone;
             const messageHandler = (message) => {
                 if (~message.indexOf('"msg":"connect"')) {
@@ -38,7 +38,7 @@ if (Meteor.isServer) {
             };
 
             before(() => {
-                Meteor.directStream.registerMessageHandler(messageHandler);
+                Meteor.directStream.onMessage(messageHandler);
             });
 
             it('should register callback and receive messages', (done) => {
@@ -55,7 +55,7 @@ if (Meteor.isServer) {
             let debug;
 
             before(() => {
-                Meteor.directStream.registerMessageHandler(function messageHandler(message) {
+                Meteor.directStream.onMessage(function messageHandler(message) {
                     // Selectively prevent Meteor's handler only on call to `methodThatShouldNotBeExecuted`.
                     if (~message.indexOf('methodThatShouldNotBeExecuted')) {
                         this.preventCallingMeteorHandler();
