@@ -1,4 +1,7 @@
 {
+  "env": {
+    "mocha": true
+  },
   "globals": { "chai": true, "makeTestConnection": true },
   "rules": {
     "no-unused-expressions": [

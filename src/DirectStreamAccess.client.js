@@ -8,16 +8,12 @@
  */
 DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
 
-    constructor() {
-        super();
-    }
-
     /**
      * Sends a message to the server.
-     * This method does not throw any error if there is no connection to server. If you care about this check the status
-     * with Meteor.status() before sending anything.
+     * This method does not throw any error if there is no connection to server. If you care about
+     * this check the status with Meteor.status() before sending anything.
      *
-     * @param {string} message Message to send to the server.
+     * @param {string} message - Message to send to the server.
      */
     send(message) {
         Meteor.connection._stream.send(message);
@@ -30,7 +26,7 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
      * @returns {boolean}
      */
     _isInstalled() {
-        return (DDPCommon._parseDDP) ? true : false;
+        return !!DDPCommon._parseDDP;
     }
 
     /**
@@ -48,7 +44,8 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
 
                 if (self._preventMeteor) {
                     self._preventMeteor = false;
-                    // We do not want Meteor to complain about invalid JSON or DDP so we are faking a `pong` message.
+                    // We do not want Meteor to complain about invalid JSON or DDP so we
+                    // are faking a `pong` message.
                     return { msg: 'pong' };
                 }
                 return DDPCommon._parseDDP(message);

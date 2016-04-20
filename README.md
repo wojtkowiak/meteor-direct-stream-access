@@ -1,6 +1,8 @@
-## Meteor Direct Stream Access
+# Meteor Direct Stream Access
 
-A really simple API to directly access the SockJS stream in Meteor.
+A really simple API to directly use the SockJS stream in Meteor.
+
+#### **Check also [meteor-custom-protocol](https://github.com/wojtkowiak/meteor-custom-protocol)!**
 
 ### Main features
 
@@ -56,6 +58,7 @@ if (Meteor.isClient) {
 ## Contributing
 
 If you discovered a bug please file an issue. PR are always welcome, but be sure to run and update the tests.
+Please also regenerate the docs running `gulp docs`.
 
 ### Tests
 
@@ -65,4 +68,8 @@ To run the tests, being inside the meteor project that uses this package type:
 
 and check out the results in the browser.
 
-*If you will run the tests in two or more browsers in the same time, the tests may produce false negative output.*
+*If you will run the tests in two or more browsers in the same time, tests might produce false negative output.*
+
+### TODO
+
+* [ ] support `DDP.connect`

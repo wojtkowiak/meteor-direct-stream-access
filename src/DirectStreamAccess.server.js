@@ -8,10 +8,6 @@
  */
 DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
 
-    constructor() {
-        super();
-    }
-
     /**
      * Returns true if hook for catching incoming data is installed.
      *
@@ -23,8 +19,8 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
     }
 
     /**
-     * Installs the hook for capturing incoming data. On the server we are wrapping the default callback for `data`
-     * event on every socket.
+     * Installs the hook for capturing incoming data. On the server we are wrapping the default
+     * callback for `data` event on every socket.
      *
      * @private
      */
@@ -32,21 +28,24 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
         const self = this;
 
         if (!this._isInstalled()) {
-            Meteor.server.stream_server.register(function directStreamAccessSocketHandler(socket) {
+            Meteor.server.stream_server.register(
+                function directStreamAccessSocketHandler(socket) {
+                    const wrappedCallback = socket._events.data.bind(socket);
 
-                const wrappedCallback = socket._events.data.bind(socket);
+                    socket._events.data = (message) => {
+                        self._processMessage(
+                            message,
+                            (socket._meteorSession) ? socket._meteorSession.id : null
+                        );
 
-                socket._events.data = (message) => {
-                    self._processMessage(message, (socket._meteorSession) ? socket._meteorSession.id : null);
-
-                    if (!self._preventMeteor) {
-                       // console.log('run meteor');
-                        wrappedCallback(message);
-                    } else {
-                        self._preventMeteor = false;
-                    }
-                };
-            });
+                        if (!self._preventMeteor) {
+                            wrappedCallback(message);
+                        } else {
+                            self._preventMeteor = false;
+                        }
+                    };
+                }
+            );
             this._registeredInStreamServer = true;
         }
     }
@@ -55,8 +54,8 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
      * Sends a message to a specified Meteor session id.
      *
      * @throws {Error} When session id is not found.
-     * @param {string} message Message to send to the client.
-     * @param {string} sessionId Meteor's internal session id.
+     * @param {string} message   - Message to send to the client.
+     * @param {string} sessionId - Meteor's internal session id.
      */
     send(message, sessionId) {
         if (Meteor.server.sessions[sessionId]) {
@@ -69,12 +68,10 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
     /**
      * Broadcasts the message to all clients.
      *
-     * @param {string} message Message to send to all connected clients.
+     * @param {string} message - Message to send to all connected clients.
      */
     broadcast(message) {
-        _.each(Meteor.server.sessions, function sendMessageToSession(session) {
-            session.socket.send(message);
-        });
+        _.each(Meteor.server.sessions, (session) => session.socket.send(message));
     }
 
 };

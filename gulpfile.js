@@ -9,8 +9,12 @@ $.merge = require('merge-stream');
 
 gulp.task('docs', function docs() {
     var streams = $.merge();
-    var options = { private: false, 'heading-depth': 3, template: fs.readFileSync('./templates/api.hbs', 'utf8') };
-    var apiDocs = { 'CLIENT.md': 'src/lib/**/!(*.server.js)', 'SERVER.md': 'src/lib/**/!(*.client.js)' };
+    var options = {
+        private: false,
+        'heading-depth': 3,
+        template: fs.readFileSync('./templates/api.hbs', 'utf8')
+    };
+    var apiDocs = { 'CLIENT.md': 'src/**/!(*.server.js)', 'SERVER.md': 'src/**/!(*.client.js)' };
 
     function error(err) {
         $.util.log('jsdoc2md failed:', err.message);

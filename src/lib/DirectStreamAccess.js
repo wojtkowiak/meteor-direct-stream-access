@@ -11,8 +11,6 @@ DirectStreamAccessCommon = class DirectStreamAccessCommon {
     /**
      * Adds a call to `this._install` to the Meteor.startup.
      * This class should be considered abstract.
-     *
-     * @constructor
      */
     constructor() {
         if (this._install === undefined || typeof this._install !== 'function') {
@@ -31,9 +29,11 @@ DirectStreamAccessCommon = class DirectStreamAccessCommon {
     }
 
     /**
-     * Registers a message handler, which will be called to process every incoming message on the socket.
+     * Registers a message handler, which will be called to process every incoming message
+     * on the socket.
      *
-     * @param {DirectStreamAccess~messageHandler} messageHandler Function to process the incoming messages.
+     * @param {DirectStreamAccess~messageHandler} messageHandler - Function to process the
+     *      incoming messages.
      */
     onMessage(messageHandler) {
         this._messageHandlers.push(messageHandler.bind(this));
@@ -41,7 +41,8 @@ DirectStreamAccessCommon = class DirectStreamAccessCommon {
 
     /**
      * Prevents calling the original meteor message handler. Makes the message invisible for Meteor.
-     * Since any message handler is bound to this class, inside the message handler it is just called with `this.preventCallingMeteorHandler()`.
+     * Since any message handler is bound to this class, inside the message handler it is just
+     * called with `this.preventCallingMeteorHandler()`.
      */
     preventCallingMeteorHandler() {
         this._preventMeteor = true;
@@ -49,7 +50,8 @@ DirectStreamAccessCommon = class DirectStreamAccessCommon {
 
     /**
      * Stops processing any other message handlers.
-     * Since any message handler is bound to this class, inside the message handler it is just called with `this.stopProcessingHandlers()`.
+     * Since any message handler is bound to this class, inside the message handler it is just
+     * called with `this.stopProcessingHandlers()`.
      */
     stopProcessingHandlers() {
         this._stopProcessing = true;
@@ -58,8 +60,8 @@ DirectStreamAccessCommon = class DirectStreamAccessCommon {
     /**
      * Passes the received message to registered handlers.
      *
-     * @param {string} message Raw message received on the socket.
-     * @param {string} sessionId Meteor's internal session id.
+     * @param {string} message   - Raw message received on the socket.
+     * @param {string} sessionId - Meteor's internal session id.
      *
      * @protected
      */
@@ -77,7 +79,7 @@ DirectStreamAccessCommon = class DirectStreamAccessCommon {
 /**
  * Callback passed to the `registerMessageHandler` that should process the incoming messages.
  * @callback DirectStreamAccess~messageHandler
- * @param {string} message Message received on the socket.
- * @param {string=} sessionId Meteor's internal session id.
+ * @param {string}  message   - Message received on the socket.
+ * @param {string=} sessionId - Meteor's internal session id.
  */
 
