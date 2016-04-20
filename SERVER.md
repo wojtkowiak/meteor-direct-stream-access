@@ -48,24 +48,24 @@ Broadcasts the message to all clients.
 <a name="DirectStreamAccessCommon+onMessage"></a>
 
 #### meteor.directStream.onMessage(messageHandler)
-Registers a message handler, which will be called to process every incoming message on the socket.
+Registers a message handler, which will be called to process every incoming messageon the socket.
 
 **Kind**: instance method of <code>[DirectStreamAccess](#DirectStreamAccess)</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| messageHandler | <code>[messageHandler](#DirectStreamAccess..messageHandler)</code> | Function to process the incoming messages. |
+| messageHandler | <code>[messageHandler](#DirectStreamAccess..messageHandler)</code> | Function to process the      incoming messages. |
 
 <a name="DirectStreamAccessCommon+preventCallingMeteorHandler"></a>
 
 #### meteor.directStream.preventCallingMeteorHandler()
-Prevents calling the original meteor message handler. Makes the message invisible for Meteor.Since any message handler is bound to this class, inside the message handler it is just called with `this.preventCallingMeteorHandler()`.
+Prevents calling the original meteor message handler. Makes the message invisible for Meteor.Since any message handler is bound to this class, inside the message handler it is justcalled with `this.preventCallingMeteorHandler()`.
 
 **Kind**: instance method of <code>[DirectStreamAccess](#DirectStreamAccess)</code>  
 <a name="DirectStreamAccessCommon+stopProcessingHandlers"></a>
 
 #### meteor.directStream.stopProcessingHandlers()
-Stops processing any other message handlers.Since any message handler is bound to this class, inside the message handler it is just called with `this.stopProcessingHandlers()`.
+Stops processing any other message handlers.Since any message handler is bound to this class, inside the message handler it is justcalled with `this.stopProcessingHandlers()`.
 
 **Kind**: instance method of <code>[DirectStreamAccess](#DirectStreamAccess)</code>  
 <a name="DirectStreamAccessCommon+_processMessage"></a>

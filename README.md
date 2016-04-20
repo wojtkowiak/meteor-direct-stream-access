@@ -58,7 +58,7 @@ if (Meteor.isClient) {
 ## Contributing
 
 If you discovered a bug please file an issue. PR are always welcome, but be sure to run and update the tests.
-Please also regenerate the docs running `gulp docs`.
+Please also regenerate the docs running `gulp --gulpfile .gulp/gulpfile docs`.
 
 ### Tests
 

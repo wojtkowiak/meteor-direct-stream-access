@@ -12,9 +12,9 @@ gulp.task('docs', function docs() {
     var options = {
         private: false,
         'heading-depth': 3,
-        template: fs.readFileSync('./templates/api.hbs', 'utf8')
+        template: fs.readFileSync('../templates/api.hbs', 'utf8')
     };
-    var apiDocs = { 'CLIENT.md': 'src/**/!(*.server.js)', 'SERVER.md': 'src/**/!(*.client.js)' };
+    var apiDocs = { 'CLIENT.md': '../src/**/!(*.server.js)', 'SERVER.md': '../src/**/!(*.client.js)' };
 
     function error(err) {
         $.util.log('jsdoc2md failed:', err.message);
@@ -25,12 +25,12 @@ gulp.task('docs', function docs() {
             .pipe($.concat(doc))
             .pipe($.jsdocToMarkdown(options))
             .on('error', error)
-            .pipe(gulp.dest('.')));
+            .pipe(gulp.dest('..')));
     });
 
     return streams;
 });
 
 gulp.task('watch', function watch() {
-    gulp.watch('**/*.{js,hbs}', ['docs']);
+    gulp.watch('../**/*.{js,hbs}', ['docs']);
 });

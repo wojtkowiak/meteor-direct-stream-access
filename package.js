@@ -1,6 +1,6 @@
 Package.describe({
     name: 'omega:direct-stream-access',
-    version: '3.0.0',
+    version: '3.0.1',
     summary: 'Provides API to directly use Meteor\'s SockJS stream.',
     git: 'https://github.com/wojtkowiak/meteor-direct-stream-access',
     documentation: 'README.md'
