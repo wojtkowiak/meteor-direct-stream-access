@@ -1,6 +1,6 @@
 {
-  "name": "omega--direct-stream-access",
-  "version": "2.0.1",
+  "name": "meteor-direct-stream-access",
+  "version": "3.0.2",
   "dependencies": {
     "gulp": "^3.9.0",
     "gulp-jsdoc-to-markdown": "^1.1.1",

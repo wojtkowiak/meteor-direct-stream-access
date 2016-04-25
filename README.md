@@ -1,13 +1,13 @@
 # Meteor Direct Stream Access
 
-A really simple API to directly use the SockJS stream in Meteor.
+A really simple API to directly use the SockJS socket in Meteor.
 
 #### **Check also [meteor-custom-protocol](https://github.com/wojtkowiak/meteor-custom-protocol)!**
 
 ### Main features
 
 - protocol independent, messages are strings so you are not forced to use JSON, you can for example use binary data like BSON or protobuff
-- you can prevent Meteor from trying to interpret the messages so the communication goes unnoticed by Meteor (less CPU usage)
+- you can prevent Meteor from trying to interpret the messages so the communication goes unnoticed by Meteor (efficiency)
 
 ### Is this the same as *streamy* or *meteor-streams*?
 
@@ -16,11 +16,11 @@ Not really, the main feature is more or less the same but the implementation and
 Firstly lets talk about the internals:
 - *meteor-streams* is using meteor's collection/publish/subscribe mechanisms
 - *streamy* is more or less extending the DDP protocol
-- this package provides a more bare access to the socket, it does it in the most hacky way by wrapping some internal Meteor code.
+- this package provides a more bare access to the socket, it does it by wrapping some internal Meteor code.
 The reason to do it in that way was to achieve the features listed above.
  
 This package does not provide any allow/deny mechanism nor meteor sessions abstraction or management. For now you have to do it yourself.
-However a security add-on is planned.
+However a security add-on is planned. Until you want to mess a little with DDP or just send some data this package will be ok, but what you will probably find more useful is [meteor-custom-protocol](https://github.com/wojtkowiak/meteor-custom-protocol).
 
 ### Installation
 
