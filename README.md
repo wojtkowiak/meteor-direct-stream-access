@@ -36,8 +36,10 @@ In the handler you probably need to distinguish your custom messages from the DD
 ```javascript
 // Register a handler to receive messages. It will also receive DDP packets.
 Meteor.directStream.onMessage(function messageHandler(message, sessionId) {
-    console.log('Got a message: ' + message ' from session id: ' + sessionId;
-    if (message === 'test message') this.preventCallingMeteorHandler();
+    console.log('Got a message: ' + message + ' from session id: ' + sessionId);
+    if (message === 'test message') {
+        this.preventCallingMeteorHandler();
+    }
 });
 if (Meteor.isServer) {
     Meteor.directStream.broadcast('test message');
