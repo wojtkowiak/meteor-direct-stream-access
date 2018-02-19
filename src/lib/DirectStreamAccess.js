@@ -7,7 +7,6 @@
  * @type {DirectStreamAccessCommon}
  */
 DirectStreamAccessCommon = class DirectStreamAccessCommon {
-
     /**
      * Adds a call to `this._install` to the Meteor.startup.
      * This class should be considered abstract.

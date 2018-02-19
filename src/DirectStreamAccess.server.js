@@ -7,7 +7,6 @@
  * @type {DirectStreamAccess}
  */
 DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
-
     /**
      * Returns true if hook for catching incoming data is installed.
      *
@@ -28,25 +27,23 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
         const self = this;
 
         if (!this._isInstalled()) {
-            Meteor.server.stream_server.register(
-                function directStreamAccessSocketHandler(socket) {
-                    const wrappedCallback = socket._events.data.bind(socket);
+            Meteor.server.stream_server.register(function directStreamAccessSocketHandler(socket) {
+                const wrappedCallback = socket._events.data.bind(socket);
 
-                    socket._events.data = (message) => {
-                        self._processMessage(
-                            message,
-                            (socket._meteorSession) ? socket._meteorSession.id : null,
-                            (socket._meteorSession) ? socket._meteorSession.userId : null
-                        );
+                socket._events.data = (message) => {
+                    self._processMessage(
+                        message,
+                        (socket._meteorSession) ? socket._meteorSession.id : null,
+                        (socket._meteorSession) ? socket._meteorSession.userId : null
+                    );
 
-                        if (!self._preventMeteor) {
-                            wrappedCallback(message);
-                        } else {
-                            self._preventMeteor = false;
-                        }
-                    };
-                }
-            );
+                    if (!self._preventMeteor) {
+                        wrappedCallback(message);
+                    } else {
+                        self._preventMeteor = false;
+                    }
+                };
+            });
             this._registeredInStreamServer = true;
         }
     }
@@ -72,7 +69,6 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
      * @param {string} message - Message to send to all connected clients.
      */
     broadcast(message) {
-        _.each(Meteor.server.sessions, (session) => session.socket.send(message));
+        _.each(Meteor.server.sessions, session => session.socket.send(message));
     }
-
 };

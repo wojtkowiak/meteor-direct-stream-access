@@ -1,7 +1,6 @@
-import { Accounts } from 'meteor/accounts-base';
 import chai from 'ultimate-chai';
 
-const expect = chai.expect;
+const { expect } = chai;
 
 if (Meteor.isServer) {
     Meteor.methods({
@@ -14,7 +13,6 @@ if (Meteor.isServer) {
 }
 
 describe('DirectStreamAccess', () => {
-
     describe('#_install()', () => {
         it('should report proper installation state', () => {
             expect(Meteor.directStream).not.to.be.undefined();
@@ -27,7 +25,7 @@ describe('DirectStreamAccess', () => {
         let testDone;
         let messageReceived = false;
 
-        function messageHandler(message, sessionId, userId) {
+        function messageHandler(message) {
             if (message === 'testMessage') {
                 messageReceived = true;
                 this.preventCallingMeteorHandler();
@@ -61,7 +59,11 @@ describe('DirectStreamAccess', () => {
 
         after(() => {
             // Clear the handlers.
-            delete Meteor.directStream._messageHandlers[Meteor.directStream._messageHandlers.indexOf(messageHandler)];
+            delete Meteor
+                .directStream
+                ._messageHandlers[
+                    Meteor.directStream._messageHandlers.indexOf(messageHandler)
+                ];
         });
     });
 });

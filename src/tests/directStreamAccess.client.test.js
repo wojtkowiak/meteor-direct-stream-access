@@ -1,7 +1,6 @@
-import { DDP } from 'meteor/ddp-client';
 import chai from 'ultimate-chai';
 
-const expect = chai.expect;
+const { expect } = chai;
 
 if (Meteor.isServer) {
     Meteor.methods({
@@ -38,7 +37,9 @@ if (Meteor.isClient) {
                 Meteor.call('methodWithSpecifiedResponse', 'testResponse');
             });
             after(() => {
-                delete Meteor.directStream._messageHandlers[Meteor.directStream._messageHandlers.indexOf(messageHandler)];
+                delete Meteor
+                    .directStream
+                    ._messageHandlers[Meteor.directStream._messageHandlers.indexOf(messageHandler)];
             });
         });
 
@@ -58,12 +59,12 @@ if (Meteor.isClient) {
 
             it('should prevent a meteor method from running', (done) => {
                 let debugCalled = false;
-                /**
+                /*
                  * We will check if Meteor will complain about invalid JSON through
                  * the Meteor._debug method.
                  * Since we are blocking the message `test` from being processed by Meteor,
                  * only `test2` should land in the _debug method.
-                 **/
+                 */
                 Meteor._debug = function _debug(...params) {
                     if (typeof params[1] === 'string') {
                         expect(params[1]).to.be.equal('test2');
@@ -78,7 +79,9 @@ if (Meteor.isClient) {
             });
 
             after(() => {
-                delete Meteor.directStream._messageHandlers[Meteor.directStream._messageHandlers.indexOf(messageHandler)];
+                delete Meteor
+                    .directStream
+                    ._messageHandlers[Meteor.directStream._messageHandlers.indexOf(messageHandler)];
                 Meteor._debug = debug;
             });
         });

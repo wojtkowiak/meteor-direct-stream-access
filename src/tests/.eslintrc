@@ -1,11 +1,16 @@
 {
   "env": {
-    "mocha": true
+    "mocha": true,
+    "meteor": true
   },
   "globals": { "chai": true, "makeTestConnection": true },
   "rules": {
     "no-unused-expressions": [
       0
-    ]
+    ],
+    "import/no-unresolved": "off",
+    "import/extensions": "off",
+    "import/no-extraneous-dependencies": "off",
+    "no-bitwise": "off"
   }
 }

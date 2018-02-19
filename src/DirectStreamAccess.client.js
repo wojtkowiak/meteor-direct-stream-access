@@ -7,7 +7,6 @@
  * @type {DirectStreamAccess}
  */
 DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
-
     constructor() {
         super();
         this._connections = new WeakMap();
@@ -17,7 +16,8 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
      * Sends a message to the server.
      * This method does not throw any error if there is no connection to server. If you care about
      * this check the status with Meteor.status() before sending anything.
-     * You can pass an additional custom DDP connection in order to use that one instead the default one.
+     * You can pass an additional custom DDP connection in order to use that one instead the default
+     * one.
      *
      * @param {string} message           - Message to send to the server.
      * @param {Object} connection        - DDP connection instance or connection id.
@@ -43,13 +43,16 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
         const self = this;
         if (!this._connections.has(connection)) {
             const callbacks = connection._stream.eventCallbacks.message;
-            const connectionId = Symbol();
+            const connectionId = Symbol('connectionId');
             let installed = false;
-            callbacks.forEach(
-                (callback, id) => {
-                    if (callback.name === 'bound onMessage' && !installed) {
-                        connection._stream.eventCallbacks.message[id] = function directStreamOnMessage(rawMsg){
-                            self._processMessage(rawMsg, undefined, undefined, connectionId, connection);
+            callbacks.forEach((callback, id) => {
+                if (callback.name === 'bound onMessage' && !installed) {
+                    connection._stream.eventCallbacks.message[id] =
+                        function directStreamOnMessage(rawMsg) {
+                            self._processMessage(
+                                rawMsg, undefined, undefined,
+                                connectionId, connection
+                            );
 
                             if (self._preventMeteor) {
                                 self._preventMeteor = false;
@@ -59,17 +62,15 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
                             }
                             return callback(rawMsg);
                         };
-                        installed = true;
-                        this._connections.set(connection, connectionId);
-                    }
+                    installed = true;
+                    this._connections.set(connection, connectionId);
                 }
-            );
+            });
             if (installed) {
                 connection.___directStreamInstalled = true;
                 return connectionId;
-            } else {
-                throw new Error('Could not attach to DDP connection.22');
             }
+            throw new Error('Could not attach to DDP connection.22');
         }
         return this._connections.get(connection);
     }
