@@ -1,6 +1,6 @@
 {
   "name": "meteor-direct-stream-access",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "dependencies": {
     "gulp": "3.9.1",
     "gulp-jsdoc-to-markdown": "1.2.2",
@@ -16,7 +16,7 @@
   },
   "scripts": {
     "docs": "gulp --gulpfile .gulp/gulpfile.js docs",
-    "test": "meteor test-packages ./ --driver-package cultofcoders:mocha -p 3050 --test-app-path .testApp",
+    "test": "meteor test-packages ./ --driver-package cultofcoders:mocha -p 3050",
     "release": "meteor publish --release=METEOR@1.5.2.2"
   }
 }
