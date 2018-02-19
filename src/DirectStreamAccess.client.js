@@ -20,30 +20,34 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
      * You can pass an additional custom DDP connection in order to use that one instead the default one.
      *
      * @param {string} message           - Message to send to the server.
-     * @param {number|Object} connection - DDP connection instance or connection id.
+     * @param {Object} connection        - DDP connection instance or connection id.
      */
     send(message, connection) {
         let ddpConnection;
         if (connection === undefined) {
             ddpConnection = Meteor.connection;
-        } else if (typeof connection === 'number') {
-            ddpConnection = this._connections[connection];
         } else {
             ddpConnection = connection;
         }
         ddpConnection._stream.send(message);
     }
 
+    /**
+     * Register a custom connection from `DDP.connect`.
+     *
+     * @param {Object=} connection   - Reference to DDP connection object.
+     *
+     * @returns {Symbol} Id of the additional DDP connection.
+     */
     registerConnection(connection) {
         const self = this;
         if (!this._connections.has(connection)) {
             const callbacks = connection._stream.eventCallbacks.message;
             const connectionId = Symbol();
-            this._connections.set(connection, connectionId);
             let installed = false;
             callbacks.forEach(
                 (callback, id) => {
-                    if (callback.name === 'onMessage') {
+                    if (callback.name === 'bound onMessage' && !installed) {
                         connection._stream.eventCallbacks.message[id] = function directStreamOnMessage(rawMsg){
                             self._processMessage(rawMsg, undefined, undefined, connectionId, connection);
 
@@ -56,6 +60,7 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
                             return callback(rawMsg);
                         };
                         installed = true;
+                        this._connections.set(connection, connectionId);
                     }
                 }
             );
@@ -63,7 +68,7 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
                 connection.___directStreamInstalled = true;
                 return connectionId;
             } else {
-                throw new Error('Could not attach to DDP connection.');
+                throw new Error('Could not attach to DDP connection.22');
             }
         }
         return this._connections.get(connection);
