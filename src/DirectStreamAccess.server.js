@@ -35,7 +35,8 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
                     socket._events.data = (message) => {
                         self._processMessage(
                             message,
-                            (socket._meteorSession) ? socket._meteorSession.id : null
+                            (socket._meteorSession) ? socket._meteorSession.id : null,
+                            (socket._meteorSession) ? socket._meteorSession.userId : null
                         );
 
                         if (!self._preventMeteor) {

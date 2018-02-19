@@ -1,3 +1,6 @@
+import { DDP } from 'meteor/ddp-client';
+import chai from 'ultimate-chai';
+
 const expect = chai.expect;
 
 if (Meteor.isServer) {
@@ -35,20 +38,21 @@ if (Meteor.isClient) {
                 Meteor.call('methodWithSpecifiedResponse', 'testResponse');
             });
             after(() => {
-                Meteor.directStream._messageHandlers = [];
+                delete Meteor.directStream._messageHandlers[Meteor.directStream._messageHandlers.indexOf(messageHandler)];
             });
         });
 
         describe('#preventCallingMeteorHandler', () => {
             let debug;
+            function messageHandler(message) {
+                // Selectively prevent Meteor's handler only on message `test`.
+                if (message === 'test') {
+                    this.preventCallingMeteorHandler();
+                }
+            }
 
             before(() => {
-                Meteor.directStream.onMessage(function messageHandler(message) {
-                    // Selectively prevent Meteor's handler only on message `test`.
-                    if (message === 'test') {
-                        this.preventCallingMeteorHandler();
-                    }
-                });
+                Meteor.directStream.onMessage(messageHandler);
                 debug = Meteor._debug;
             });
 
@@ -74,7 +78,7 @@ if (Meteor.isClient) {
             });
 
             after(() => {
-                Meteor.directStream._messageHandlers = [];
+                delete Meteor.directStream._messageHandlers[Meteor.directStream._messageHandlers.indexOf(messageHandler)];
                 Meteor._debug = debug;
             });
         });

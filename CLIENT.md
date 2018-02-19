@@ -9,17 +9,17 @@ Implementation for the **CLIENT** side. Available as `Meteor.directStream` singl
 
 * [DirectStreamAccess](#DirectStreamAccess) : <code>[DirectStreamAccess](#DirectStreamAccess)</code>
     * _instance_
-        * [.send(message)](#DirectStreamAccess+send)
+        * [.send(message, connection)](#DirectStreamAccess+send)
         * [.onMessage(messageHandler)](#DirectStreamAccessCommon+onMessage)
         * [.preventCallingMeteorHandler()](#DirectStreamAccessCommon+preventCallingMeteorHandler)
         * [.stopProcessingHandlers()](#DirectStreamAccessCommon+stopProcessingHandlers)
-        * [._processMessage(message, sessionId)](#DirectStreamAccessCommon+_processMessage)
+        * [._processMessage(message, [sessionId], [userId], [connectionId], [connection])](#DirectStreamAccessCommon+_processMessage)
     * _inner_
         * [~messageHandler](#DirectStreamAccess..messageHandler) : <code>function</code>
 
 <a name="DirectStreamAccess+send"></a>
 
-#### meteor.directStream.send(message)
+#### meteor.directStream.send(message, connection)
 Sends a message to the server.This method does not throw any error if there is no connection to server. If you care aboutthis check the status with Meteor.status() before sending anything.
 
 **Kind**: instance method of <code>[DirectStreamAccess](#DirectStreamAccess)</code>  
@@ -27,6 +27,7 @@ Sends a message to the server.This method does not throw any error if there is 
 | Param | Type | Description |
 | --- | --- | --- |
 | message | <code>string</code> | Message to send to the server. |
+| connection | <code>number</code> &#124; <code>Object</code> | DDP connection instance or connection id. |
 
 <a name="DirectStreamAccessCommon+onMessage"></a>
 
@@ -53,7 +54,7 @@ Stops processing any other message handlers.Since any message handler is bound 
 **Kind**: instance method of <code>[DirectStreamAccess](#DirectStreamAccess)</code>  
 <a name="DirectStreamAccessCommon+_processMessage"></a>
 
-#### meteor.directStream._processMessage(message, sessionId)
+#### meteor.directStream._processMessage(message, [sessionId], [userId], [connectionId], [connection])
 Passes the received message to registered handlers.
 
 **Kind**: instance method of <code>[DirectStreamAccess](#DirectStreamAccess)</code>  
@@ -62,7 +63,10 @@ Passes the received message to registered handlers.
 | Param | Type | Description |
 | --- | --- | --- |
 | message | <code>string</code> | Raw message received on the socket. |
-| sessionId | <code>string</code> | Meteor's internal session id. |
+| [sessionId] | <code>string</code> | Meteor's internal session id. |
+| [userId] | <code>string</code> | User id if available. |
+| [connectionId] | <code>Symbol</code> | Id of the additional DDP connection. |
+| [connection] | <code>Object</code> | Reference to DDP connection object. |
 
 <a name="DirectStreamAccess..messageHandler"></a>
 
@@ -75,4 +79,7 @@ Callback passed to the `registerMessageHandler` that should process the incoming
 | --- | --- | --- |
 | message | <code>string</code> | Message received on the socket. |
 | [sessionId] | <code>string</code> | Meteor's internal session id. |
+| [userId] | <code>string</code> | User id if available. |
+| [connectionId] | <code>Symbol</code> | Id of the additional DDP connection. |
+| [connection] | <code>Object</code> | Reference to DDP connection object. |
 
