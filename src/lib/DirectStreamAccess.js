@@ -60,14 +60,17 @@ DirectStreamAccessCommon = class DirectStreamAccessCommon {
     /**
      * Passes the received message to registered handlers.
      *
-     * @param {string} message   - Raw message received on the socket.
-     * @param {string} sessionId - Meteor's internal session id.
+     * @param {string} message       - Raw message received on the socket.
+     * @param {string=} sessionId    - Meteor's internal session id.
+     * @param {string=} userId       - User id if available.
+     * @param {Symbol=} connectionId - Id of the additional DDP connection.
+     * @param {Object=} connection   - Reference to DDP connection object.
      *
      * @protected
      */
-    _processMessage(message, sessionId) {
+    _processMessage(message, sessionId, userId, connectionId, connection) {
         for (const callback of this._messageHandlers) {
-            callback(message, sessionId);
+            callback(message, sessionId, userId, connectionId, connection);
             if (this._stopProcessing) {
                 this._stopProcessing = false;
                 break;
@@ -79,7 +82,11 @@ DirectStreamAccessCommon = class DirectStreamAccessCommon {
 /**
  * Callback passed to the `registerMessageHandler` that should process the incoming messages.
  * @callback DirectStreamAccess~messageHandler
- * @param {string}  message   - Message received on the socket.
- * @param {string=} sessionId - Meteor's internal session id.
+ * @param {string}  message      - Message received on the socket.
+ * @param {string=} sessionId    - Meteor's internal session id.
+ * @param {string=} userId       - User id if available.
+ * @param {Symbol=} connectionId - Id of the additional DDP connection.
+ * @param {Object=} connection   - Reference to DDP connection object.
+ *
  */
 

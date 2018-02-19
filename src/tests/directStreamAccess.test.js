@@ -1,3 +1,6 @@
+import { Accounts } from 'meteor/accounts-base';
+import chai from 'ultimate-chai';
+
 const expect = chai.expect;
 
 if (Meteor.isServer) {
@@ -11,6 +14,7 @@ if (Meteor.isServer) {
 }
 
 describe('DirectStreamAccess', () => {
+
     describe('#_install()', () => {
         it('should report proper installation state', () => {
             expect(Meteor.directStream).not.to.be.undefined();
@@ -23,18 +27,21 @@ describe('DirectStreamAccess', () => {
         let testDone;
         let messageReceived = false;
 
-        before(() => {
-            Meteor.directStream.onMessage(function messageHandler(message) {
-                if (message === 'testMessage') {
-                    messageReceived = true;
-                    this.preventCallingMeteorHandler();
-                    // If we received a message from the client on the server then the
-                    // test is passed.
-                    if (Meteor.isServer) {
-                        testDone();
-                    }
+        function messageHandler(message, sessionId, userId) {
+            if (message === 'testMessage') {
+                messageReceived = true;
+                this.preventCallingMeteorHandler();
+                this.stopProcessingHandlers();
+                // If we received a message from the client on the server then the
+                // test is passed.
+                if (Meteor.isServer) {
+                    testDone();
                 }
-            });
+            }
+        }
+
+        before(() => {
+            Meteor.directStream.onMessage(messageHandler);
         });
 
         it('should exchange messages between server and client', (done) => {
@@ -54,7 +61,7 @@ describe('DirectStreamAccess', () => {
 
         after(() => {
             // Clear the handlers.
-            Meteor.directStream._messageHandlers = [];
+            delete Meteor.directStream._messageHandlers[Meteor.directStream._messageHandlers.indexOf(messageHandler)];
         });
     });
 });

@@ -1,6 +1,6 @@
 {
   "name": "meteor-direct-stream-access",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "dependencies": {
     "gulp": "^3.9.0",
     "gulp-jsdoc-to-markdown": "^1.1.1",
@@ -10,6 +10,9 @@
     "merge-stream": "^1.0.0"
   },
   "scripts": {
-    "install": "npm install -g eslint-config-airbnb eslint-plugin-react eslint"
+    "install": "npm install -g eslint-config-airbnb eslint-plugin-react eslint",
+    "docs": "gulp --gulpfile .gulp/gulpfile.js docs",
+    "test": "meteor test-packages ./ --driver-package cultofcoders:mocha -p 3050 --test-app-path .testApp",
+    "release": "meteor publish --release=METEOR@1.5.2.2"
   }
 }

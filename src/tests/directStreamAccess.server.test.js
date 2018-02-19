@@ -1,12 +1,14 @@
+import chai from 'ultimate-chai';
+
 const expect = chai.expect;
 let methodExecuted = false;
 
-function fakeClient(callback) {
+function fakeClient(callback, handler) {
     makeTestConnection(
         chai.assert,
         (client) => callback(client),
         () => {
-            Meteor.directStream._messageHandlers = [];
+            delete Meteor.directStream._messageHandlers[Meteor.directStream._messageHandlers.indexOf(handler)];
         }
     );
 }
@@ -31,14 +33,14 @@ if (Meteor.isServer) {
 
         describe('#onMessage()', () => {
             let testDone;
-            const messageHandler = (message) => {
+            const onMessageMessageHandler = (message) => {
                 if (~message.indexOf('"msg":"connect"')) {
                     testDone();
                 }
             };
 
             before(() => {
-                Meteor.directStream.onMessage(messageHandler);
+                Meteor.directStream.onMessage(onMessageMessageHandler);
             });
 
             it('should register callback and receive messages', (done) => {
@@ -48,21 +50,22 @@ if (Meteor.isServer) {
                 fakeClient((client) => client.disconnect());
             });
             after(() => {
-                Meteor.directStream._messageHandlers = [];
+                delete Meteor.directStream._messageHandlers[Meteor.directStream._messageHandlers.indexOf(onMessageMessageHandler)];
             });
         });
 
         describe('#preventCallingMeteorHandler', () => {
             let debug;
+            function messageHandler(message) {
+                // Selectively prevent Meteor's handler only on call
+                // to `methodThatShouldNotBeExecuted`.
+                if (~message.indexOf('methodThatShouldNotBeExecuted')) {
+                    this.preventCallingMeteorHandler();
+                }
+            }
 
             before(() => {
-                Meteor.directStream.onMessage(function messageHandler(message) {
-                    // Selectively prevent Meteor's handler only on call
-                    // to `methodThatShouldNotBeExecuted`.
-                    if (~message.indexOf('methodThatShouldNotBeExecuted')) {
-                        this.preventCallingMeteorHandler();
-                    }
-                });
+                Meteor.directStream.onMessage(messageHandler);
             });
             it('should prevent a meteor method from running', (done) => {
                 /**
@@ -85,15 +88,49 @@ if (Meteor.isServer) {
                         )
                     );
                     client.call('methodThatShouldNotBeExecuted');
-                });
+                }, messageHandler);
             });
             after(() => {
                 // Clean up the handlers.
-                Meteor.directStream._messageHandlers = [];
-                if (Meteor.isClient) {
-                    Meteor._debug = debug;
-                }
+                delete Meteor.directStream._messageHandlers[Meteor.directStream._messageHandlers.indexOf(messageHandler)];
             });
         });
+
+        describe('#onMessage with userId', () => {
+            let receivedUserId;
+            let messageReceived = false;
+            let finishTest;
+            const userIdMessageHandler = function userIdMessageHandler(message, sessionId, userId) {
+                if (~message.indexOf('dummyMethod')) {
+                    receivedUserId = userId;
+                    messageReceived = true;
+                    this.preventCallingMeteorHandler();
+                    this.stopProcessingHandlers();
+                    if (finishTest) { finishTest() };
+                }
+            };
+
+            before(() => {
+                Meteor.directStream.onMessage(userIdMessageHandler);
+            });
+
+            it('should have userId', (done) => {
+                finishTest = () => {
+                    expect(receivedUserId === Meteor.__testEnv.userId).to.be.true();
+                    done();
+                };
+                fakeClient((client) => {
+                    client.call('login', {
+                        user: {username: 'test'},
+                        password: 'test'
+                    });
+                    client.call('dummyMethod');
+                }, userIdMessageHandler);
+            });
+            after(() => {
+                delete Meteor.directStream._messageHandlers[Meteor.directStream._messageHandlers.indexOf(userIdMessageHandler)];
+            });
+        });
+
     });
 }

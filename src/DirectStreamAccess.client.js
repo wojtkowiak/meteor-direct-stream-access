@@ -8,15 +8,65 @@
  */
 DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
 
+    constructor() {
+        super();
+        this._connections = new WeakMap();
+    }
+
     /**
      * Sends a message to the server.
      * This method does not throw any error if there is no connection to server. If you care about
      * this check the status with Meteor.status() before sending anything.
+     * You can pass an additional custom DDP connection in order to use that one instead the default one.
      *
-     * @param {string} message - Message to send to the server.
+     * @param {string} message           - Message to send to the server.
+     * @param {number|Object} connection - DDP connection instance or connection id.
      */
-    send(message) {
-        Meteor.connection._stream.send(message);
+    send(message, connection) {
+        let ddpConnection;
+        if (connection === undefined) {
+            ddpConnection = Meteor.connection;
+        } else if (typeof connection === 'number') {
+            ddpConnection = this._connections[connection];
+        } else {
+            ddpConnection = connection;
+        }
+        ddpConnection._stream.send(message);
+    }
+
+    registerConnection(connection) {
+        const self = this;
+        if (!this._connections.has(connection)) {
+            const callbacks = connection._stream.eventCallbacks.message;
+            const connectionId = Symbol();
+            this._connections.set(connection, connectionId);
+            let installed = false;
+            callbacks.forEach(
+                (callback, id) => {
+                    if (callback.name === 'onMessage') {
+                        connection._stream.eventCallbacks.message[id] = function directStreamOnMessage(rawMsg){
+                            self._processMessage(rawMsg, undefined, undefined, connectionId, connection);
+
+                            if (self._preventMeteor) {
+                                self._preventMeteor = false;
+                                // We do not want Meteor to complain about invalid JSON or DDP so we
+                                // are faking a `pong` message.
+                                return '{"msg":"pong"}';
+                            }
+                            return callback(rawMsg);
+                        };
+                        installed = true;
+                    }
+                }
+            );
+            if (installed) {
+                connection.___directStreamInstalled = true;
+                return connectionId;
+            } else {
+                throw new Error('Could not attach to DDP connection.');
+            }
+        }
+        return this._connections.get(connection);
     }
 
     /**
