@@ -11,6 +11,7 @@ Implementation for the **CLIENT** side. Available as `Meteor.directStream` singl
     * _instance_
         * [.send(message, connection)](#DirectStreamAccess+send)
         * [.registerConnection([connection])](#DirectStreamAccess+registerConnection) ⇒ <code>Symbol</code>
+        * [.getMainConnectionId()](#DirectStreamAccess+getMainConnectionId) ⇒ <code>null</code> &#124; <code>Symbol</code>
         * [.onMessage(messageHandler)](#DirectStreamAccessCommon+onMessage)
         * [.preventCallingMeteorHandler()](#DirectStreamAccessCommon+preventCallingMeteorHandler)
         * [.stopProcessingHandlers()](#DirectStreamAccessCommon+stopProcessingHandlers)
@@ -24,7 +25,8 @@ Implementation for the **CLIENT** side. Available as `Meteor.directStream` singl
 Sends a message to the server.
 This method does not throw any error if there is no connection to server. If you care about
 this check the status with Meteor.status() before sending anything.
-You can pass an additional custom DDP connection in order to use that one instead the default one.
+You can pass an additional custom DDP connection in order to use that one instead the default
+one.
 
 **Kind**: instance method of <code>[DirectStreamAccess](#DirectStreamAccess)</code>  
 
@@ -45,6 +47,12 @@ Register a custom connection from `DDP.connect`.
 | --- | --- | --- |
 | [connection] | <code>Object</code> | Reference to DDP connection object. |
 
+<a name="DirectStreamAccess+getMainConnectionId"></a>
+
+#### meteor.directStream.getMainConnectionId() ⇒ <code>null</code> &#124; <code>Symbol</code>
+Returns the id of the main DDP connection.
+
+**Kind**: instance method of <code>[DirectStreamAccess](#DirectStreamAccess)</code>  
 <a name="DirectStreamAccessCommon+onMessage"></a>
 
 #### meteor.directStream.onMessage(messageHandler)

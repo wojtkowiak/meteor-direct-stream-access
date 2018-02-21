@@ -1,6 +1,6 @@
 {
   "name": "meteor-direct-stream-access",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "dependencies": {
     "gulp": "3.9.1",
     "gulp-jsdoc-to-markdown": "1.2.2",

@@ -12,8 +12,14 @@ if (Meteor.isClient) {
     describe('DirectStreamAccess', () => {
         describe('#_install()', () => {
             it('should install itself properly', () => {
-                expect(DDPCommon._parseDDP).not.to.be.undefined();
-                expect(DDPCommon.parseDDP).not.to.be.equal(DDPCommon._parseDDP);
+                expect(Meteor.connection.___directStreamInstalled).to.be.true();
+            });
+        });
+
+        describe('#registerConnection()', () => {
+            it('should return id', () => {
+                const mainId = Meteor.directStream._mainConnectionId;
+                expect(Meteor.directStream.registerConnection(Meteor.connection)).to.be.equal(mainId);
             });
         });
 

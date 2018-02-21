@@ -10,6 +10,7 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
     constructor() {
         super();
         this._connections = new WeakMap();
+        this._mainConnectionId = null;
     }
 
     /**
@@ -46,7 +47,7 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
             const connectionId = Symbol('connectionId');
             let installed = false;
             callbacks.forEach((callback, id) => {
-                if (callback.name === 'bound onMessage' && !installed) {
+                if (~callback.name.indexOf('onMessage') && !installed) {
                     connection._stream.eventCallbacks.message[id] =
                         function directStreamOnMessage(rawMsg) {
                             self._processMessage(
@@ -70,7 +71,7 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
                 connection.___directStreamInstalled = true;
                 return connectionId;
             }
-            throw new Error('Could not attach to DDP connection.22');
+            throw new Error('Could not attach to DDP connection.');
         }
         return this._connections.get(connection);
     }
@@ -78,11 +79,22 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
     /**
      * Returns true if the hook for catching incoming data is installed.
      *
+     * @param {Object=} connection - DDP connection instance.
+     *
      * @private
      * @returns {boolean}
      */
-    _isInstalled() {
-        return !!DDPCommon._parseDDP;
+    _isInstalled(connection) {
+        return connection ? connection.___directStreamInstalled : Meteor.connection.___directStreamInstalled;
+    }
+
+    /**
+     * Returns the id of the main DDP connection.
+     *
+     * @returns {null|Symbol}
+     */
+    getMainConnectionId() {
+        return this._mainConnectionId;
     }
 
     /**
@@ -93,19 +105,8 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
     _install() {
         const self = this;
 
-        if (!this._isInstalled()) {
-            DDPCommon._parseDDP = DDPCommon.parseDDP;
-            DDPCommon.parseDDP = function parseDDP(message) {
-                self._processMessage(message);
-
-                if (self._preventMeteor) {
-                    self._preventMeteor = false;
-                    // We do not want Meteor to complain about invalid JSON or DDP so we
-                    // are faking a `pong` message.
-                    return { msg: 'pong' };
-                }
-                return DDPCommon._parseDDP(message);
-            };
+        if (!this._isInstalled(Meteor.connection)) {
+            this._mainConnectionId = this.registerConnection(Meteor.connection);
         }
     }
 };
