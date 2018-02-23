@@ -3,6 +3,10 @@
   "globals": { "DDPCommon": true, "DirectStreamAccessCommon": true },
   "rules": {
     "indent": [ 2, 4, { "SwitchCase": 1 } ],
-    "comma-dangle": [ 0 ]
+    "comma-dangle": [ 0 ],
+    "no-underscore-dangle": "off",
+    "class-methods-use-this": "off",
+    "no-param-reassign": "off",
+    "prefer-arrow-callback": "off"
   }
 }

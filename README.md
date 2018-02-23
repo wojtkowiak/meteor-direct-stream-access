@@ -35,7 +35,7 @@ In the handler you probably need to distinguish your custom messages from the DD
 
 ```javascript
 // Register a handler to receive messages. It will also receive DDP packets.
-Meteor.directStream.onMessage(function messageHandler(message, sessionId) {
+Meteor.directStream.onMessage(function messageHandler(message, sessionId, userId) {
     console.log('Got a message: ' + message + ' from session id: ' + sessionId);
     if (message === 'test message') {
         this.preventCallingMeteorHandler();
@@ -47,6 +47,19 @@ if (Meteor.isServer) {
 if (Meteor.isClient) {
     Meteor.directStream.send('test message');
 }
+
+// Custom DDP.
+const ddp = DDP.connect('ip:port');
+const connectionId = Meteor.directStream.registerConnection(ddp);
+
+if (Meteor.isClient) {
+    Meteor.directStream.send('test message', ddp);
+}
+
+// `connectionId` and `connection` can be used to distinguish messages coming from additional DDP connection.
+Meteor.directStream.onMessage(function messageHandler(message, sessionId, userId, connectionId, connection) {
+});
+
 ```
 
 ## Client API
@@ -60,18 +73,20 @@ if (Meteor.isClient) {
 ## Contributing
 
 If you discovered a bug please file an issue. PR are always welcome, but be sure to run and update the tests.
-Please also regenerate the docs running `gulp --gulpfile .gulp/gulpfile.js docs`.
+Please also regenerate the docs running `npm run docs`.
 
 ### Tests
 
-To run the tests, being inside the meteor project that uses this package type:
+To run the tests:
 
-`meteor test-packages --driver-package=practicalmeteor:mocha omega:direct-stream-access`
+`npm run test`
 
 and check out the results in the browser.
 
 *If you will run the tests in two or more browsers in the same time, tests might produce false negative output.*
 
-### TODO
+### Changelog
 
-* [ ] support `DDP.connect`
+- **4.0.0** 
+    - added support for `DDP.connect` and `userId` in the server's message handler
+    - dropped support for Meteor below `1.4`  

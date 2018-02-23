@@ -1,4 +1,6 @@
-const expect = chai.expect;
+import chai from 'ultimate-chai';
+
+const { expect } = chai;
 
 if (Meteor.isServer) {
     Meteor.methods({
@@ -23,18 +25,21 @@ describe('DirectStreamAccess', () => {
         let testDone;
         let messageReceived = false;
 
-        before(() => {
-            Meteor.directStream.onMessage(function messageHandler(message) {
-                if (message === 'testMessage') {
-                    messageReceived = true;
-                    this.preventCallingMeteorHandler();
-                    // If we received a message from the client on the server then the
-                    // test is passed.
-                    if (Meteor.isServer) {
-                        testDone();
-                    }
+        function messageHandler(message) {
+            if (message === 'testMessage') {
+                messageReceived = true;
+                this.preventCallingMeteorHandler();
+                this.stopProcessingHandlers();
+                // If we received a message from the client on the server then the
+                // test is passed.
+                if (Meteor.isServer) {
+                    testDone();
                 }
-            });
+            }
+        }
+
+        before(() => {
+            Meteor.directStream.onMessage(messageHandler);
         });
 
         it('should exchange messages between server and client', (done) => {
@@ -54,7 +59,11 @@ describe('DirectStreamAccess', () => {
 
         after(() => {
             // Clear the handlers.
-            Meteor.directStream._messageHandlers = [];
+            delete Meteor
+                .directStream
+                ._messageHandlers[
+                    Meteor.directStream._messageHandlers.indexOf(messageHandler)
+                ];
         });
     });
 });

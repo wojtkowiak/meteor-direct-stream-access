@@ -1,4 +1,6 @@
-const expect = chai.expect;
+import chai from 'ultimate-chai';
+
+const { expect } = chai;
 
 if (Meteor.isServer) {
     Meteor.methods({
@@ -10,8 +12,14 @@ if (Meteor.isClient) {
     describe('DirectStreamAccess', () => {
         describe('#_install()', () => {
             it('should install itself properly', () => {
-                expect(DDPCommon._parseDDP).not.to.be.undefined();
-                expect(DDPCommon.parseDDP).not.to.be.equal(DDPCommon._parseDDP);
+                expect(Meteor.connection.___directStreamInstalled).to.be.true();
+            });
+        });
+
+        describe('#registerConnection()', () => {
+            it('should return id', () => {
+                const mainId = Meteor.directStream._mainConnectionId;
+                expect(Meteor.directStream.registerConnection(Meteor.connection)).to.be.equal(mainId);
             });
         });
 
@@ -35,31 +43,34 @@ if (Meteor.isClient) {
                 Meteor.call('methodWithSpecifiedResponse', 'testResponse');
             });
             after(() => {
-                Meteor.directStream._messageHandlers = [];
+                delete Meteor
+                    .directStream
+                    ._messageHandlers[Meteor.directStream._messageHandlers.indexOf(messageHandler)];
             });
         });
 
         describe('#preventCallingMeteorHandler', () => {
             let debug;
+            function messageHandler(message) {
+                // Selectively prevent Meteor's handler only on message `test`.
+                if (message === 'test') {
+                    this.preventCallingMeteorHandler();
+                }
+            }
 
             before(() => {
-                Meteor.directStream.onMessage(function messageHandler(message) {
-                    // Selectively prevent Meteor's handler only on message `test`.
-                    if (message === 'test') {
-                        this.preventCallingMeteorHandler();
-                    }
-                });
+                Meteor.directStream.onMessage(messageHandler);
                 debug = Meteor._debug;
             });
 
             it('should prevent a meteor method from running', (done) => {
                 let debugCalled = false;
-                /**
+                /*
                  * We will check if Meteor will complain about invalid JSON through
                  * the Meteor._debug method.
                  * Since we are blocking the message `test` from being processed by Meteor,
                  * only `test2` should land in the _debug method.
-                 **/
+                 */
                 Meteor._debug = function _debug(...params) {
                     if (typeof params[1] === 'string') {
                         expect(params[1]).to.be.equal('test2');
@@ -74,7 +85,9 @@ if (Meteor.isClient) {
             });
 
             after(() => {
-                Meteor.directStream._messageHandlers = [];
+                delete Meteor
+                    .directStream
+                    ._messageHandlers[Meteor.directStream._messageHandlers.indexOf(messageHandler)];
                 Meteor._debug = debug;
             });
         });
