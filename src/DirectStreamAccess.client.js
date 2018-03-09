@@ -46,9 +46,10 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
             const callbacks = connection._stream.eventCallbacks.message;
             const connectionId = Symbol('connectionId');
             let installed = false;
-            callbacks.forEach((callback, id) => {
-                if (~callback.name.indexOf('onMessage') && !installed) {
-                    connection._stream.eventCallbacks.message[id] =
+            if (callbacks.length === 1) {
+                if (!installed) {
+                    const callback = callbacks.pop();
+                    callbacks.push(
                         function directStreamOnMessage(rawMsg) {
                             self._processMessage(
                                 rawMsg, undefined, undefined,
@@ -62,11 +63,15 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
                                 return '{"msg":"pong"}';
                             }
                             return callback(rawMsg);
-                        };
+                        }
+                    );
                     installed = true;
                     this._connections.set(connection, connectionId);
                 }
-            });
+            } else {
+                throw new Error('More than one onMessage handler detected');
+            }
+
             if (installed) {
                 connection.___directStreamInstalled = true;
                 return connectionId;
