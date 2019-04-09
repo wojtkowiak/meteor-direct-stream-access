@@ -87,6 +87,9 @@ and check out the results in the browser.
 
 ### Changelog
 
+- **4.0.3** 
+    - added support for Meteor `1.8.1`  
+
 - **4.0.0** 
     - added support for `DDP.connect` and `userId` in the server's message handler
     - dropped support for Meteor below `1.4`  
