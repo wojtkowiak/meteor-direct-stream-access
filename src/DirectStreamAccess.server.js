@@ -56,7 +56,12 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
      * @param {string} sessionId - Meteor's internal session id.
      */
     send(message, sessionId) {
-        if (Meteor.server.sessions[sessionId]) {
+        if (
+            Meteor.server.sessions instanceof Map
+            && Meteor.server.sessions.get(sessionId)
+        ) {
+            Meteor.server.sessions.get(sessionId).socket.send(message);
+        } else if (Meteor.server.sessions[sessionId]) {
             Meteor.server.sessions[sessionId].socket.send(message);
         } else {
             throw new Error('Meteor session id not found.');
@@ -69,6 +74,10 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
      * @param {string} message - Message to send to all connected clients.
      */
     broadcast(message) {
-        _.each(Meteor.server.sessions, session => session.socket.send(message));
+        if (Meteor.server.sessions instanceof Map) {
+            Meteor.server.sessions.forEach(session => session.socket.send(message));
+        } else {
+            _.each(Meteor.server.sessions, session => session.socket.send(message));
+        }
     }
 };
