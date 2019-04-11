@@ -88,4 +88,3 @@ DirectStreamAccessCommon = class DirectStreamAccessCommon {
  * @param {Object=} connection   - Reference to DDP connection object.
  *
  */
-

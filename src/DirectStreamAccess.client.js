@@ -90,7 +90,8 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
      * @returns {boolean}
      */
     _isInstalled(connection) {
-        return connection ? connection.___directStreamInstalled : Meteor.connection.___directStreamInstalled;
+        return connection
+            ? connection.___directStreamInstalled : Meteor.connection.___directStreamInstalled;
     }
 
     /**
@@ -108,8 +109,6 @@ DirectStreamAccess = class DirectStreamAccess extends DirectStreamAccessCommon {
      * @private
      */
     _install() {
-        const self = this;
-
         if (!this._isInstalled(Meteor.connection)) {
             this._mainConnectionId = this.registerConnection(Meteor.connection);
         }
